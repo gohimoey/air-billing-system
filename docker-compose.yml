@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  air-billing:
+    build: .
+    container_name: air-billing-system
+    ports:
+      - "2343:80"
+    volumes:
+      - ./:/var/www/html
+      - /media/HDD-Storage/air/uploads:/var/www/html/uploads:cached
+    environment:
+      - TZ=Asia/Jakarta
+      - DB_HOST=host.docker.internal
+      - DB_NAME=air_bill
+      - DB_USER=root
+      - DB_PASS=casaos
+    networks:
+      - app-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost/login.php || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+networks:
+  app-network:
+    driver: bridge
